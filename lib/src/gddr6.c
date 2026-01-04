@@ -100,7 +100,7 @@ int gddr6_detect_compatible_gpus(void)
 
     pci_cleanup(pacc);
 
-    ctx.temperatures = malloc(ctx.num_devices * sizeof(uint32_t));
+    ctx.temperatures = malloc(ctx.num_devices * sizeof(int32_t));
     if (ctx.temperatures == NULL)
     {
         fprintf(stderr, "Memory allocation failed\n");
@@ -153,7 +153,7 @@ void gddr6_get_temperatures(void)
         {
             void *virt_addr = (uint8_t *) ctx.devices[i].mapped_addr + (ctx.devices[i].phys_addr  - ctx.devices[i].base_offset);
             uint32_t read_result = *((uint32_t *)virt_addr);
-            uint32_t temp = ((read_result & 0x00000fff) / 0x20);
+            int8_t temp = (read_result & 0x00001fff) >> 5;
             ctx.temperatures[i] = temp;
         }
     }
@@ -169,7 +169,7 @@ void gddr6_monitor_temperatures(void)
         printf("\rVRAM Temps: |");
         for (uint32_t i = 0; i < ctx.num_devices; i++)
         {
-            printf(" %3u°C |", ctx.temperatures[i]);
+            printf(" %3d°C |", ctx.temperatures[i]);
         }
         fflush(stdout);
         sleep(1);

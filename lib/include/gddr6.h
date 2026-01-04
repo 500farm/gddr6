@@ -22,7 +22,7 @@ struct gddr6_ctx {
   struct device *devices;
   int num_devices;
   int fd;
-  uint32_t *temperatures;
+  int32_t *temperatures;
 };
 
 void gddr6_init(void);
